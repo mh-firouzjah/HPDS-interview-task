@@ -2,11 +2,19 @@
 import subprocess
 
 
-def get_memory_info() -> dict[str, int] | None:
-    """returns a dict[str, int] represents 'total, used and free memory info, or None in case of failure.
+def get_memory_info() -> dict[str, int]:
+    """
+    Exception:
+
+        subprocess.CalledProcessError
+
+    return:
+
+      dict[str, int]: represents 'total, used and free memory info.
 
     e.g: {'total': 16637, 'used': 4486, 'free': 7034}
     """
+
     try:
         byteOutput = subprocess.check_output(["free", "--mega"], timeout=2)
         """
@@ -20,6 +28,5 @@ def get_memory_info() -> dict[str, int] | None:
                 ),
             )
         )
-    except subprocess.CalledProcessError as e:
-        print("Error in 'free --mega':\n", e.output)
-        return None
+    except subprocess.CalledProcessError as err:
+        raise Exception("Error in 'free --mega':\n", err.output) from err
