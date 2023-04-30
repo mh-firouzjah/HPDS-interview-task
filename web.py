@@ -4,7 +4,9 @@ from typing import Optional
 from fastapi import FastAPI
 from fastapi_utils.tasks import repeat_every
 
+from config import logger
 from models import MemInfo
+from utils import get_memory_info
 
 app = FastAPI()
 
@@ -43,24 +45,19 @@ RECORDS = [
 @app.get("/")
 async def meminfo_api(n: Optional[int] = None) -> list[MemInfo]:
     """This will return memory info records for the each last 'n' minutes.(defaults to 1 minutes ago/1 record)"""
-    # n == None returns a boolean which is it self an integer either 0 or 1.
+    # (n == None) -> bool => int & in (0, 1).
     # list[:0] -> []
     return list(reversed(RECORDS))[: n or n == None]
 
 
 async def record_meminfo():
-    RECORDS.append(
-        {
-            "id": RECORDS[-1]["id"] + 1,
-            "created": datetime.now(),
-            "total": 16637,
-            "used": 4486,
-            "free": 7034,
-        }
-    )
+    try:
+        get_memory_info()
+    except Exception as err:
+        logger.error(err)
 
 
 @app.on_event("startup")
-@repeat_every(seconds=60 * 1)  # 1 minute
+@repeat_every(seconds=60 * 1, logger=logger)  # 1 minute
 async def record_meminfo_task() -> None:
     await record_meminfo()
