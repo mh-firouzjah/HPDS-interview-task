@@ -2,7 +2,7 @@
 import subprocess
 
 
-def get_memory_info():
+def get_memory_info() -> dict[str, int] | None:
     """returns a dict[str, int] represents 'total, used and free memory info, or None in case of failure.
 
     e.g: {'total': 16637, 'used': 4486, 'free': 7034}
