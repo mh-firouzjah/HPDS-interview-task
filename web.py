@@ -1,6 +1,7 @@
 from typing import Optional
 
 from fastapi import FastAPI
+from fastapi_utils.tasks import repeat_every
 
 app = FastAPI()
 
@@ -18,3 +19,23 @@ async def meminfo_api(n: Optional[int] = None):
     # n == None returns a boolean which is it self an integer either 0 or 1.
     # list[:0] -> []
     return RECORDS[: n or n == None]
+
+
+async def record_meminfo():
+    from datetime import datetime
+
+    RECORDS.append(
+        {
+            "id": RECORDS[-1]["id"] + 1,
+            "date": str(datetime.now())[:16],
+            "total": 16637,
+            "used": 4486,
+            "free": 7034,
+        }
+    )
+
+
+@app.on_event("startup")
+@repeat_every(seconds=60 * 1)  # 1 minute
+async def record_meminfo_task() -> None:
+    return await record_meminfo()
