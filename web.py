@@ -1,3 +1,5 @@
+from typing import Optional
+
 from fastapi import FastAPI
 
 app = FastAPI()
@@ -11,6 +13,8 @@ RECORDS = [
 
 
 @app.get("/")
-async def meminfo_api(number_of_records: int = 1):
-    """This will return memory info records of 'number_of_records'."""
-    return RECORDS[:number_of_records]
+async def meminfo_api(n: Optional[int] = None):
+    """This will return memory info records for the each last 'n' minutes.(defaults to 1 minutes ago/1 record)"""
+    # n == None returns a boolean which is it self an integer either 0 or 1.
+    # list[:0] -> []
+    return RECORDS[: n or n == None]
