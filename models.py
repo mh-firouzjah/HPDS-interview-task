@@ -2,7 +2,6 @@ from datetime import datetime
 
 from pydantic import BaseModel as PydanticBaseModel
 from sqlalchemy import Column, DateTime, Integer
-from sqlalchemy.sql import func
 
 from database import Base
 

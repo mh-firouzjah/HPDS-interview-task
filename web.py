@@ -5,7 +5,7 @@ from fastapi_utils.tasks import repeat_every
 from sqlalchemy.orm import Session
 
 import models
-from config import logger
+from logger_config import logger
 from database import SessionLocal, Sessionmaker, engine
 from utils import get_memory_info
 
